@@ -1,0 +1,6 @@
+@tailwind base;
+// some global styles
+@import "./global.scss";
+
+@tailwind components;
+@tailwind utilities;

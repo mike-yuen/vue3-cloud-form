@@ -1,15 +1,11 @@
 <template>
-  <CloudForm />
+  <div></div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import CloudForm from "@/components/CloudForm.vue";
 
 export default defineComponent({
-  name: "Home",
-  components: {
-    CloudForm
-  }
+  name: "CloudForm"
 });
 </script>
