@@ -4,7 +4,7 @@
     style="width: 820px;"
   >
     <div class="w-full">
-      <form class="form-register">
+      <form @submit.prevent="updateFirebase" @input="fieldUpdate">
         <div class="block w-full overflow-hidden bg-primary rounded-lg">
           <div class="steps float-left bg-primary" style="width: 280px">
             <ul class="p-0 m-0">
@@ -23,16 +23,22 @@
                 </a>
               </li>
             </ul>
+            <Notification :state="state" />
           </div>
           <div class="content float-right bg-white" style="width: 540px">
             <section class="block">
               <div class="py-0 px-12">
-                <div class="text-center pt-8 px-6 pb-2">
+                <div class="text-center pt-8 pb-4">
                   <h3 class="text-2xl font-bold">Vue3 CloudForm</h3>
-                  <p class="text-md text-gray-700 font-medium my-4">
-                    Please enter your infomation and proceed to any action so
-                    you can see the notify.
-                  </p>
+                  <div class="flex justify-between items-center">
+                    <p class="text-md text-secondary font-medium my-4">
+                      Vue Form State:
+                    </p>
+                    <span class="p-1 px-3 bg-blue-200 text-sm text-blue-600">
+                      {{ state == "" ? "waiting for changes" : state }}
+                    </span>
+                  </div>
+                  <hr />
                 </div>
                 <div class="flex relative -mx-2">
                   <!-- First Name -->
@@ -49,6 +55,7 @@
                         name="first-name"
                         placeholder="First Name"
                         autocomplete="off"
+                        v-model="formData.firstname"
                       />
                     </fieldset>
                   </div>
@@ -65,6 +72,7 @@
                         class="w-full pt-1 pb-2 focus:outline-none"
                         name="last-name"
                         placeholder="Last Name"
+                        v-model="formData.lastname"
                       />
                     </fieldset>
                   </div>
@@ -83,6 +91,7 @@
                         name="your_email"
                         class="w-full pt-1 pb-2 focus:outline-none"
                         placeholder="example@email.com"
+                        v-model="formData.email"
                       />
                     </fieldset>
                   </div>
@@ -101,6 +110,7 @@
                         class="w-full pt-1 pb-2 focus:outline-none"
                         name="phone"
                         placeholder="+1 888-999-7777"
+                        v-model="formData.phone"
                       />
                     </fieldset>
                   </div>
@@ -112,11 +122,11 @@
                       Your Note:
                     </label>
                     <textarea
-                      type="text"
                       class="w-full pt-1 pb-2 px-4 rounded focus:outline-none border border-gray-400"
                       name="ssn"
                       placeholder="Message..."
                       rows="3"
+                      v-model="formData.note"
                     />
                   </div>
                 </div>
@@ -126,10 +136,21 @@
           <div class="actions float-right bg-white" style="width: 540px">
             <ul role="menu" class="flex justify-end px-12 mt-3 mb-8">
               <li class="flex items-center h-10 rounded-full bg-primary">
-                <a class="text-white px-4 pb-1">Revoke to origin data</a>
+                <a
+                  class="text-white px-4 pb-1 cursor-pointer"
+                  @click="revokeData"
+                >
+                  Revoke to origin data
+                </a>
               </li>
-              <li class="flex items-center h-10 rounded-full bg-secondary ml-4">
-                <a class="text-white px-4 pb-1">
+              <li
+                v-if="state === 'modifying'"
+                class="flex items-center h-10 rounded-full bg-secondary ml-4"
+              >
+                <a
+                  class="text-white px-4 pb-1 cursor-pointer"
+                  @click="updateFirebase"
+                >
                   Save changes
                 </a>
               </li>
@@ -142,9 +163,85 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, reactive, ref } from "vue";
+import debounce from "lodash/debounce";
+import { getCloudForm, setCloudForm } from "@/services/firebaseServices";
+import { CloudformData } from "@/interface/cloudformData.interface";
+import Notification from "@/components/Notification.vue";
 
 export default defineComponent({
-  name: "CloudForm"
+  name: "CloudForm",
+  components: {
+    Notification
+  },
+
+  setup() {
+    const state = ref("loading"); // synced, modifying, revoked, error
+    const errorMessage = ref("");
+    const formData = reactive<CloudformData>({});
+    const originalData = reactive<CloudformData>({
+      firstname: "",
+      lastname: "",
+      email: "",
+      phone: "",
+      note: ""
+    });
+
+    function cloneData(source: CloudformData, object: CloudformData) {
+      object.firstname = source.firstname || "";
+      object.lastname = source.lastname || "";
+      object.email = source.email || "";
+      object.phone = source.phone || "";
+      object.note = source.note || "";
+    }
+
+    async function getFirebaseData() {
+      const data = await getCloudForm();
+      if (!data) {
+        setCloudForm(originalData);
+      } else {
+        cloneData(data, originalData);
+      }
+      cloneData(originalData, formData);
+      state.value = "synced";
+    }
+
+    async function updateFirebase() {
+      console.log("called");
+      try {
+        await setCloudForm(formData);
+        state.value = "synced";
+      } catch (error) {
+        errorMessage.value = JSON.stringify(error);
+        state.value = "error";
+      }
+    }
+
+    const debouncedUpdate = debounce(() => updateFirebase(), 1500);
+
+    function fieldUpdate() {
+      state.value = "modifying";
+      debouncedUpdate();
+    }
+
+    async function revokeData() {
+      cloneData(originalData, formData);
+      await updateFirebase();
+      state.value = "revoked";
+    }
+
+    // created
+    getFirebaseData();
+
+    return {
+      state,
+      formData,
+      originalData,
+      errorMessage,
+      updateFirebase,
+      fieldUpdate,
+      revokeData
+    };
+  }
 });
 </script>
