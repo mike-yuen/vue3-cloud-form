@@ -1,4 +1,4 @@
-import { cloudformCollection } from "@/config/firebase";
+import firebase, { cloudformCollection } from "@/config/firebase";
 import { CloudformData } from "@/interface/cloudformData.interface";
 
 export const getCloudForm = (): firebase.firestore.DocumentData => {
@@ -19,4 +19,8 @@ export const getCloudForm = (): firebase.firestore.DocumentData => {
 
 export const setCloudForm = (cloudformData: CloudformData) => {
   cloudformCollection.doc("MinhNguyen").set(cloudformData);
+};
+
+export const checkSyncProgress = () => {
+  firebase.functions().httpsCallable("checkSyncProgress");
 };
