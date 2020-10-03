@@ -1,5 +1,7 @@
 <template>
-  <CloudForm />
+  <div class="w-full flex justify-center mx-auto">
+    <CloudForm />
+  </div>
 </template>
 
 <script lang="ts">
