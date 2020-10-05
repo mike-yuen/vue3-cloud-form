@@ -16,6 +16,6 @@
     "webpack-node-externals": "^2.5.2"
   },
   "engines": {
-    "node": "10"
+    "node": "8"
   }
 }

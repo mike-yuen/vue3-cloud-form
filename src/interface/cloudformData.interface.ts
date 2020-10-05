@@ -4,4 +4,5 @@ export interface CloudformData {
   email?: string;
   phone?: string;
   note?: string;
+  percentage?: number;
 }

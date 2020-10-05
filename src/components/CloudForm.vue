@@ -165,11 +165,7 @@
 <script lang="ts">
 import { defineComponent, reactive, ref } from "vue";
 import debounce from "lodash/debounce";
-import {
-  getCloudForm,
-  setCloudForm,
-  checkSyncProgress
-} from "@/services/firebaseServices";
+import { getCloudForm, setCloudForm } from "@/services/firebaseServices";
 import { CloudformData } from "@/interface/cloudformData.interface";
 import Notification from "@/components/Notification.vue";
 
@@ -214,7 +210,6 @@ export default defineComponent({
       try {
         await setCloudForm(formData);
         state.value = "synced";
-        checkSyncProgress();
       } catch (error) {
         errorMessage.value = JSON.stringify(error);
         state.value = "error";

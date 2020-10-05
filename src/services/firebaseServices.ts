@@ -17,10 +17,7 @@ export const getCloudForm = (): firebase.firestore.DocumentData => {
     });
 };
 
-export const setCloudForm = (cloudformData: CloudformData) => {
-  cloudformCollection.doc("MinhNguyen").set(cloudformData);
-};
-
-export const checkSyncProgress = () => {
-  firebase.functions().httpsCallable("checkSyncProgress");
+export const setCloudForm = async (cloudformData: CloudformData) => {
+  await cloudformCollection.doc("MinhNguyen").set(cloudformData);
+  getCloudForm();
 };
