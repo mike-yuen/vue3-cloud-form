@@ -8,7 +8,7 @@ export const getCloudForm = async () => {
 
   let result: DocumentData | null = null
   querySnapshot.forEach((doc) => {
-    if (doc.id === 'mikey') result = doc.data
+    if (doc.id === 'mikey') result = doc.data()
   })
   return result
 }

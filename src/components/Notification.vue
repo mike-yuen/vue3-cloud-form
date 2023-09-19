@@ -5,36 +5,26 @@
   </div>
 </template>
 
-<script lang="ts">
-import { computed, defineComponent } from "vue";
-import debounce from "lodash/debounce";
+<script setup lang="ts">
+import { computed } from 'vue'
 
-export default defineComponent({
-  name: "Notification",
-  props: {
-    state: String,
-    errorMessage: String
-  },
+const props = defineProps<{
+  state: string
+  errorMessage?: string
+}>()
 
-  setup(props) {
-    const notification = computed(() => {
-      switch (props.state) {
-        case "synced":
-          return "Form is synced with Firestore";
-        case "modifying":
-          return "From data changed, will sync with Firebase";
-        case "revoked":
-          return "From data and Firebase revoked to original data";
-        case "error":
-          return `Failed to save to Firestore. ${props.errorMessage}`;
-        default:
-          return "Loading...";
-      }
-    });
-
-    return {
-      notification
-    };
+const notification = computed(() => {
+  switch (props.state) {
+    case 'synced':
+      return 'Form is synced with Firestore'
+    case 'modifying':
+      return 'From data changed, will sync with Firebase'
+    case 'revoked':
+      return 'From data and Firebase revoked to original data'
+    case 'error':
+      return `Failed to save to Firestore. ${props.errorMessage}`
+    default:
+      return 'Loading...'
   }
-});
+})
 </script>

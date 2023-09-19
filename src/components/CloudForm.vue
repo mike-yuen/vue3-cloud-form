@@ -1,8 +1,5 @@
 <template>
-  <div
-    class="relative flex bg-white my-16 shadow-xl rounded-lg"
-    style="width: 820px;"
-  >
+  <div class="relative flex bg-white my-16 shadow-xl rounded-lg" style="width: 820px">
     <div class="w-full">
       <form @submit.prevent="updateFirebase" @input="fieldUpdate">
         <div class="block w-full overflow-hidden bg-primary rounded-lg">
@@ -12,9 +9,7 @@
                 <a class="outline-none">
                   <div class="flex items-center px-6 py-3">
                     <p class="w-10 h-10 m-3 ml-0 rounded-full bg-white">
-                      <span
-                        class="flex w-full h-full justify-center items-center"
-                      >
+                      <span class="flex w-full h-full justify-center items-center">
                         <img src="@/assets/logo.png" width="30" />
                       </span>
                     </p>
@@ -31,11 +26,9 @@
                 <div class="text-center pt-8 pb-4">
                   <h3 class="text-2xl font-bold">Vue3 CloudForm</h3>
                   <div class="flex justify-between items-center">
-                    <p class="text-md text-secondary font-medium my-4">
-                      Vue Form State:
-                    </p>
+                    <p class="text-md text-secondary font-medium my-4">Vue Form State:</p>
                     <span class="p-1 px-3 bg-blue-200 text-sm text-blue-600">
-                      {{ state == "" ? "waiting for changes" : state }}
+                      {{ state == '' ? 'waiting for changes' : state }}
                     </span>
                   </div>
                   <hr />
@@ -43,12 +36,8 @@
                 <div class="flex relative -mx-2">
                   <!-- First Name -->
                   <div class="relative px-2 mb-4 w-1/2">
-                    <fieldset
-                      class="rounded px-4 border border-gray-400 text-left"
-                    >
-                      <legend class="text-xs font-medium text-gray-600">
-                        First Name
-                      </legend>
+                    <fieldset class="rounded px-4 border border-gray-400 text-left">
+                      <legend class="text-xs font-medium text-gray-600">First Name</legend>
                       <input
                         type="text"
                         class="w-full pt-1 pb-2 focus:outline-none"
@@ -61,12 +50,8 @@
                   </div>
                   <!-- Last Name -->
                   <div class="relative px-2 mb-4 w-1/2">
-                    <fieldset
-                      class="rounded px-4 border border-gray-400 text-left"
-                    >
-                      <legend class="text-xs font-medium text-gray-600">
-                        Last Name
-                      </legend>
+                    <fieldset class="rounded px-4 border border-gray-400 text-left">
+                      <legend class="text-xs font-medium text-gray-600">Last Name</legend>
                       <input
                         type="text"
                         class="w-full pt-1 pb-2 focus:outline-none"
@@ -80,9 +65,7 @@
                 <!-- Your Email -->
                 <div class="flex relative -mx-2">
                   <div class="relative px-2 mb-4 w-full">
-                    <fieldset
-                      class="rounded px-4 border border-gray-400 text-left"
-                    >
+                    <fieldset class="rounded px-4 border border-gray-400 text-left">
                       <legend class="text-xs font-medium text-gray-600">
                         Your Email (no validation)
                       </legend>
@@ -99,12 +82,8 @@
                 <!-- Your phone -->
                 <div class="flex relative -mx-2">
                   <div class="relative px-2 mb-4 w-full">
-                    <fieldset
-                      class="rounded px-4 border border-gray-400 text-left"
-                    >
-                      <legend class="text-xs font-medium text-gray-600">
-                        Phone Number
-                      </legend>
+                    <fieldset class="rounded px-4 border border-gray-400 text-left">
+                      <legend class="text-xs font-medium text-gray-600">Phone Number</legend>
                       <input
                         type="text"
                         class="w-full pt-1 pb-2 focus:outline-none"
@@ -117,10 +96,8 @@
                 </div>
                 <hr class="my-4" />
                 <div class="flex relative -mx-2">
-                  <div class="relative px-2 mb-4 w-full text-left ">
-                    <label class="block text-sm font-medium text-gray-600 mb-2">
-                      Your Note:
-                    </label>
+                  <div class="relative px-2 mb-4 w-full text-left">
+                    <label class="block text-sm font-medium text-gray-600 mb-2"> Your Note: </label>
                     <textarea
                       class="w-full pt-1 pb-2 px-4 rounded focus:outline-none border border-gray-400"
                       name="ssn"
@@ -136,10 +113,7 @@
           <div class="actions float-right bg-white" style="width: 540px">
             <ul role="menu" class="flex justify-end px-12 mt-3 mb-8">
               <li class="flex items-center h-10 rounded-full bg-primary">
-                <a
-                  class="text-white px-4 pb-1 cursor-pointer"
-                  @click="revokeData"
-                >
+                <a class="text-white px-4 pb-1 cursor-pointer" @click="revokeData">
                   Revoke to origin data
                 </a>
               </li>
@@ -147,10 +121,7 @@
                 v-if="state === 'modifying'"
                 class="flex items-center h-10 rounded-full bg-secondary ml-4"
               >
-                <a
-                  class="text-white px-4 pb-1 cursor-pointer"
-                  @click="updateFirebase"
-                >
+                <a class="text-white px-4 pb-1 cursor-pointer" @click="updateFirebase">
                   Save changes
                 </a>
               </li>
@@ -162,85 +133,66 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, reactive, ref } from "vue";
-import debounce from "lodash/debounce";
-import { getCloudForm, setCloudForm } from "@/services/firebaseServices";
-import { type CloudformData } from "@/interface/cloudformData.interface";
-import Notification from "@/components/Notification.vue";
+<script setup lang="ts">
+import { reactive, ref } from 'vue'
+import debounce from 'lodash/debounce'
+import { getCloudForm, setCloudForm } from '@/services/firebaseServices'
+import { type CloudformData } from '@/interface/cloudformData.interface'
+import Notification from '@/components/Notification.vue'
 
-export default defineComponent({
-  name: "CloudForm",
-  components: {
-    Notification
-  },
+const state = ref('loading') // synced, modifying, revoked, error
+const errorMessage = ref('')
+const formData = reactive<CloudformData>({})
+const originalData = reactive<CloudformData>({
+  firstname: '',
+  lastname: '',
+  email: '',
+  phone: '',
+  note: ''
+})
 
-  setup() {
-    const state = ref("loading"); // synced, modifying, revoked, error
-    const errorMessage = ref("");
-    const formData = reactive<CloudformData>({});
-    const originalData = reactive<CloudformData>({
-      firstname: "",
-      lastname: "",
-      email: "",
-      phone: "",
-      note: ""
-    });
+function cloneData(source: CloudformData, object: CloudformData) {
+  object.firstname = source.firstname || ''
+  object.lastname = source.lastname || ''
+  object.email = source.email || ''
+  object.phone = source.phone || ''
+  object.note = source.note || ''
+}
 
-    function cloneData(source: CloudformData, object: CloudformData) {
-      object.firstname = source.firstname || "";
-      object.lastname = source.lastname || "";
-      object.email = source.email || "";
-      object.phone = source.phone || "";
-      object.note = source.note || "";
-    }
-
-    async function getFirebaseData() {
-      const data = await getCloudForm();
-      if (!data) {
-        setCloudForm(originalData);
-      } else {
-        cloneData(data, originalData);
-      }
-      cloneData(originalData, formData);
-      state.value = "synced";
-    }
-
-    async function updateFirebase() {
-      try {
-        await setCloudForm(formData);
-        state.value = "synced";
-      } catch (error) {
-        errorMessage.value = JSON.stringify(error);
-        state.value = "error";
-      }
-    }
-
-    const debouncedUpdate = debounce(() => updateFirebase(), 1500);
-
-    function fieldUpdate() {
-      state.value = "modifying";
-      debouncedUpdate();
-    }
-
-    async function revokeData() {
-      cloneData(originalData, formData);
-      await updateFirebase();
-      state.value = "revoked";
-    }
-
-    // created
-    getFirebaseData();
-
-    return {
-      state,
-      formData,
-      originalData,
-      errorMessage,
-      updateFirebase,
-      fieldUpdate,
-      revokeData
-    };
+async function getFirebaseData() {
+  const data = await getCloudForm()
+  if (!data) {
+    setCloudForm(originalData)
+  } else {
+    cloneData(data, originalData)
   }
-});
+  cloneData(originalData, formData)
+  state.value = 'synced'
+}
+
+async function updateFirebase() {
+  try {
+    await setCloudForm(formData)
+    state.value = 'synced'
+  } catch (error) {
+    errorMessage.value = JSON.stringify(error)
+    state.value = 'error'
+  }
+}
+
+const debouncedUpdate = debounce(() => updateFirebase(), 1500)
+
+function fieldUpdate() {
+  state.value = 'modifying'
+  debouncedUpdate()
+}
+
+async function revokeData() {
+  cloneData(originalData, formData)
+  await updateFirebase()
+  state.value = 'revoked'
+}
+
+// created
+getFirebaseData()
 </script>

@@ -8,4 +8,3 @@ const config = {
 const app = firebase.initializeApp(config)
 
 export const firestore = getFirestore(app)
-// collection('cloud-form')
