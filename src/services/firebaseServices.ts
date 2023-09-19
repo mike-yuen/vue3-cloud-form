@@ -1,23 +1,20 @@
-import firebase, { cloudformCollection } from "@/config/firebase";
-import { CloudformData } from "@/interface/cloudformData.interface";
+import { collection, doc, getDocs, setDoc, type DocumentData } from 'firebase/firestore'
 
-export const getCloudForm = (): firebase.firestore.DocumentData => {
-  return cloudformCollection
-    .doc("MinhNguyen")
-    .get()
-    .then(function(doc) {
-      if (doc.exists) {
-        return doc.data();
-      } else {
-        return undefined;
-      }
-    })
-    .catch(function(error) {
-      console.log("Error getting document:", error);
-    });
-};
+import { firestore } from '@/config/firebase'
+import { type CloudformData } from '@/interface/cloudformData.interface'
+
+export const getCloudForm = async () => {
+  const querySnapshot = await getDocs(collection(firestore, 'cloud-form'))
+
+  let result: DocumentData | null = null
+  querySnapshot.forEach((doc) => {
+    if (doc.id === 'mikey') result = doc.data
+  })
+  return result
+}
 
 export const setCloudForm = async (cloudformData: CloudformData) => {
-  await cloudformCollection.doc("MinhNguyen").set(cloudformData);
-  getCloudForm();
-};
+  const cloudFormRef = collection(firestore, 'cloud-form')
+  await setDoc(doc(cloudFormRef, 'mikey'), cloudformData)
+  getCloudForm()
+}

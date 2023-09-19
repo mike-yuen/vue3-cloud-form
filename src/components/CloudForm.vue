@@ -166,7 +166,7 @@
 import { defineComponent, reactive, ref } from "vue";
 import debounce from "lodash/debounce";
 import { getCloudForm, setCloudForm } from "@/services/firebaseServices";
-import { CloudformData } from "@/interface/cloudformData.interface";
+import { type CloudformData } from "@/interface/cloudformData.interface";
 import Notification from "@/components/Notification.vue";
 
 export default defineComponent({

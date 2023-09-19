@@ -1,12 +1,11 @@
-import * as firebase from "firebase";
+import * as firebase from 'firebase/app'
+import { getFirestore } from 'firebase/firestore'
 
 const config = {
-  apiKey: process.env.VUE_APP_FIREBASE_API_KEY,
-  projectId: "vue3-cloud-form"
-};
-firebase.initializeApp(config);
+  apiKey: import.meta.env.VUE_APP_FIREBASE_API_KEY,
+  projectId: 'vue3-cloud-form'
+}
+const app = firebase.initializeApp(config)
 
-export default firebase;
-export const cloudformCollection = firebase
-  .firestore()
-  .collection("cloud-form");
+export const firestore = getFirestore(app)
+// collection('cloud-form')
